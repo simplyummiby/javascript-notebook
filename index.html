@@ -77,6 +77,8 @@ const entries=[
 {id:"upper",title:".toUpperCase()",category:"Methods",description:"Make letters uppercase.",code:'"rosy".toUpperCase();',result:'"ROSY"',keywords:"capitalize uppercase capital letters"},
 {id:"lower",title:".toLowerCase()",category:"Methods",description:"Make letters lowercase.",code:'"ROSY".toLowerCase();',result:'"rosy"',keywords:"lower lowercase letters"},
 {id:"trim",title:".trim()",category:"Methods",description:"Remove whitespace at the beginning and end.",code:'"  hello  ".trim();',result:'"hello"',keywords:"remove spaces whitespace clean"},
+{id:"trimstart",title:".trimStart()",category:"Methods",description:"Remove whitespace only from the beginning of a string.",code:'"  hello  ".trimStart();',result:'"hello  "',keywords:"remove leading starting beginning spaces whitespace"},
+{id:"trimend",title:".trimEnd()",category:"Methods",description:"Remove whitespace only from the end of a string.",code:'"  hello  ".trimEnd();',result:'"  hello"',keywords:"remove trailing ending spaces whitespace"},
 {id:"replace",title:".replace()",category:"Methods",description:"Replace the first matching text with something else.",code:'"cat cat".replace("cat","dog");',result:'"dog cat"',keywords:"substitute change text"},
 {id:"repeat",title:".repeat()",category:"Methods",description:"Repeat a string a given number of times.",code:'"Hi".repeat(3);',result:'"HiHiHi"',keywords:"multiply repeat"}
 ];
@@ -96,6 +98,8 @@ const questions=[
 {id:"upper",q:'What is "Rosy".toUpperCase()?',options:['"rosy"','"ROSY"','"Rosy"'],answer:1,why:"All letters become uppercase."},
 {id:"lower",q:'What is "ROSY".toLowerCase()?',options:['"rosy"','"ROSY"','"Rosy"'],answer:0,why:"All letters become lowercase."},
 {id:"trim",q:'What is "  Hi  ".trim()?',options:['"  Hi"','"Hi"','"Hi  "'],answer:1,why:"trim removes spaces at both ends."},
+{id:"trimstart",q:'What is "  Hi  ".trimStart()?',options:['"Hi  "','"  Hi"','"Hi"'],answer:0,why:"trimStart removes leading spaces and keeps trailing spaces."},
+{id:"trimend",q:'What is "  Hi  ".trimEnd()?',options:['"Hi  "','"  Hi"','"Hi"'],answer:1,why:"trimEnd removes trailing spaces and keeps leading spaces."},
 {id:"replace",q:'What is "cat cat".replace("cat","dog")?',options:['"dog dog"','"cat dog"','"dog cat"'],answer:2,why:"replace changes only the first match."},
 {id:"repeat",q:'What is "Hi".repeat(3)?',options:['"HiHiHi"','"Hi Hi Hi"','"Hi3"'],answer:0,why:"repeat does not add spaces."}
 ];
@@ -124,6 +128,8 @@ const labs=[
 {id:"lower",name:".toLowerCase()",hint:"Converts all letters to lowercase.",run:s=>s.toLowerCase(),code:s=>JSON.stringify(s)+".toLowerCase()"},
 {id:"length",name:".length",hint:"Counts UTF-16 code units (often the number of characters).",run:s=>s.length,code:s=>JSON.stringify(s)+".length"},
 {id:"trim",name:".trim()",hint:"Removes whitespace from both ends.",run:s=>s.trim(),code:s=>JSON.stringify(s)+".trim()"},
+{id:"trimstart",name:".trimStart()",hint:"Removes whitespace only from the start.",run:s=>s.trimStart(),code:s=>JSON.stringify(s)+".trimStart()"},
+{id:"trimend",name:".trimEnd()",hint:"Removes whitespace only from the end.",run:s=>s.trimEnd(),code:s=>JSON.stringify(s)+".trimEnd()"},
 {id:"slice",name:".slice(start, end)",hint:"Extracts from start to just before end.",args:["Start index","End index"],run:(s,a)=>s.slice(Number(a[0]),Number(a[1])),code:(s,a)=>JSON.stringify(s)+".slice("+Number(a[0])+", "+Number(a[1])+")"},
 {id:"includes",name:".includes(text)",hint:"Checks whether the text appears inside the string.",args:["Search for"],run:(s,a)=>s.includes(a[0]),code:(s,a)=>JSON.stringify(s)+".includes("+JSON.stringify(a[0])+")"},
 {id:"indexof",name:".indexOf(text)",hint:"Returns the first match's position or -1 if absent.",args:["Search for"],run:(s,a)=>s.indexOf(a[0]),code:(s,a)=>JSON.stringify(s)+".indexOf("+JSON.stringify(a[0])+")"},
