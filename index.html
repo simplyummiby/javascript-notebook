@@ -45,7 +45,7 @@ pre{margin:0;background:#302734;color:#fff3f8;border-radius:10px;padding:12px;wh
 <section id="practice" role="tabpanel" hidden>
 <div class="section-header"><div><h2>Practice what you know</h2><p>Quick multiple-choice questions with instant explanations.</p></div></div>
 <div class="notice">Questions only use entries marked “Covered” in Reference. You can change your selections anytime.</div>
-<div class="panel"><div class="quiz-top"><div><strong>Mini quiz</strong><div class="hint" id="quizStatus">Ready when you are.</div></div><button class="smallbtn" id="restart">New questions ↻</button></div><div id="quiz"></div><div id="quizFinal" aria-live="polite"></div></div>
+<div class="panel"><div class="pills" id="quizModes" aria-label="Quiz type"><button class="pill active" data-mode="output">Predict Output</button><button class="pill" data-mode="method">Which Method?</button><button class="pill" data-mode="mistake">Find the Mistake</button><button class="pill" data-mode="review">Review My Mistakes <span id="missedCount"></span></button></div><div class="quiz-top"><div><strong id="quizTitle">Mini quiz</strong><div class="hint" id="quizStatus">Ready when you are.</div></div><button class="smallbtn" id="restart">New questions ↻</button></div><div id="quiz"></div><div id="quizFinal" aria-live="polite"></div></div>
 </section>
 <section id="playground" role="tabpanel" hidden>
 <div class="section-header"><div><h2>String playground</h2><p>Type your own text, choose a method, and see the result instantly.</p></div></div>
@@ -104,10 +104,10 @@ const questions=[
 {id:"repeat",q:'What is "Hi".repeat(3)?',options:['"HiHiHi"','"Hi Hi Hi"','"Hi3"'],answer:0,why:"repeat does not add spaces."}
 ];
 const STORE="ummiby-js-notebook-v1";
-let state;try{state=JSON.parse(localStorage.getItem(STORE))||{}}catch{state={}};state.covered=state.covered||[];state.favorites=state.favorites||[];
+let state;try{state=JSON.parse(localStorage.getItem(STORE))||{}}catch{state={}};state.covered=state.covered||[];state.favorites=state.favorites||[];state.missed=state.missed||{};
 function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch{}}
 const el=id=>document.getElementById(id);
-let activeFilter="all",currentQuiz=[],quizAnswers={};
+let activeFilter="all",currentQuiz=[],quizAnswers={},quizMode="output";
 document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b===button)));document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==tab);if(tab==="practice")renderQuiz();}));
 function renderCards(){const text=el("search").value.trim().toLowerCase(),category=el("category").value;const matches=entries.slice().sort((a,b)=>a.title.toLowerCase().localeCompare(b.title.toLowerCase(),undefined,{ignorePunctuation:true})).filter(e=>(category==="All"||e.category===category)&&(activeFilter==="all"||activeFilter==="covered"&&state.covered.includes(e.id)||activeFilter==="favorites"&&state.favorites.includes(e.id)||activeFilter==="new"&&!state.covered.includes(e.id))&&[e.title,e.description,e.keywords,e.code].join(" ").toLowerCase().includes(text));
 el("totalCount").textContent=entries.length;el("coveredCount").textContent=state.covered.length;el("savedCount").textContent=state.favorites.length;
@@ -116,12 +116,58 @@ for(const e of matches){const card=document.createElement("article");card.classN
 }
 function toggle(key,id){const array=state[key];state[key]=array.includes(id)?array.filter(x=>x!==id):[...array,id];save();renderCards()}
 el("search").addEventListener("input",renderCards);el("category").addEventListener("change",renderCards);document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
-function newQuiz(){const available=questions.filter(q=>state.covered.includes(q.id));currentQuiz=available.sort(()=>Math.random()-.5).slice(0,Math.min(5,available.length));quizAnswers={};renderQuiz()}
-function renderQuiz(){const available=questions.filter(q=>state.covered.includes(q.id));if(!currentQuiz.length&&available.length)newQuiz();const wrap=el("quiz");wrap.replaceChildren();el("quizFinal").replaceChildren();if(!available.length){el("quizStatus").textContent="No topics selected yet";wrap.innerHTML='<div class="empty">Go to Reference and mark a few entries “Covered” to unlock practice questions.</div>';return}
-if(!currentQuiz.length){el("quizStatus").textContent="No questions available";return}
-const done=Object.keys(quizAnswers).length,correct=currentQuiz.filter((q,i)=>quizAnswers[i]===q.answer).length;el("quizStatus").textContent=done+" of "+currentQuiz.length+" answered";
-currentQuiz.forEach((q,i)=>{const box=document.createElement("div");box.className="question";const title=document.createElement("h3");title.textContent=(i+1)+". "+q.q;box.append(title);const opts=document.createElement("div");opts.className="choices";q.options.forEach((opt,j)=>{const b=document.createElement("button");b.type="button";b.className="choice"+(quizAnswers[i]===j?" selected":"");b.textContent=opt;b.setAttribute("aria-pressed",String(quizAnswers[i]===j));b.onclick=()=>{quizAnswers[i]=j;renderQuiz()};opts.append(b)});box.append(opts);if(quizAnswers[i]!==undefined){const fb=document.createElement("div");fb.className="feedback"+(quizAnswers[i]===q.answer?" ok":"");fb.textContent=(quizAnswers[i]===q.answer?"✓ Correct! ":"Not quite. ")+q.why;box.append(fb)}wrap.append(box)});
-if(done===currentQuiz.length){const result=document.createElement("div");result.className="panel quiz-score";result.textContent="You got "+correct+" out of "+currentQuiz.length+" correct!";el("quizFinal").append(result)}}
+const extraQuestions=[
+{id:"trimstart",kind:"method",q:"You want to remove spaces only from the beginning of text. Which method?",options:[".trimEnd()",".trimStart()",".trim()"],answer:1,why:"trimStart removes leading whitespace, leaving the end untouched."},
+{id:"trimend",kind:"method",q:"Which method removes trailing whitespace but keeps leading whitespace?",options:[".trim()",".slice()",".trimEnd()"],answer:2,why:"trimEnd removes whitespace from the right side only."},
+{id:"trim",kind:"method",q:"Which method removes whitespace from both ends?",options:[".trim()",".replace()",".toUpperCase()"],answer:0,why:"trim removes whitespace from both ends."},
+{id:"slice",kind:"method",q:"You need part of a string between two indexes. Which method?",options:[".includes()",".slice()",".length"],answer:1,why:"slice extracts a section between start and end indexes."},
+{id:"includes",kind:"method",q:"Which method checks if a string contains certain text?",options:[".includes()",".indexOf()",".repeat()"],answer:0,why:"includes returns true or false for a substring."},
+{id:"indexof",kind:"method",q:"You need the position where text first appears. Which method?",options:[".trim()",".indexOf()",".charAt()"],answer:1,why:"indexOf returns the position of the first match, or -1."},
+{id:"upper",kind:"method",q:"Which method makes every letter uppercase?",options:[".toLowerCase()",".toUpperCase()",".replace()"],answer:1,why:"toUpperCase converts text to uppercase."},
+{id:"lower",kind:"method",q:"Which method makes every letter lowercase?",options:[".toLowerCase()",".toUpperCase()",".trim()"],answer:0,why:"toLowerCase converts text to lowercase."},
+{id:"replace",kind:"method",q:"Which method replaces the first occurrence of matching text?",options:[".repeat()",".replace()",".slice()"],answer:1,why:"replace changes the first matching occurrence."},
+{id:"repeat",kind:"method",q:"Which method repeats a string several times?",options:[".concat()",".replace()",".repeat()"],answer:2,why:"repeat makes multiple copies of a string."},
+{id:"length",kind:"method",q:"How do you find the length of a string?",options:[".length",".length()",".count()"],answer:0,why:"length is a property, not a method. No parentheses."},
+{id:"log",kind:"mistake",q:'Find the mistake: console.log("Hello";',options:["It needs one more closing parenthesis","log needs a capital L","console should be Console"],answer:0,why:"The function call needs a closing parenthesis before the semicolon."},
+{id:"length",kind:"mistake",q:'Find the mistake: "Rosy".length()',options:["Use .length without parentheses","Add an argument","Write .Length instead"],answer:0,why:"length is a property, so .length is correct."},
+{id:"upper",kind:"mistake",q:'Find the mistake: "hello".toUpperCase',options:["Missing method parentheses ()","Use quotation marks around the method","The string needs a semicolon to work"],answer:0,why:"The method must be called with parentheses: .toUpperCase()."},
+{id:"trimstart",kind:"mistake",q:'You want to keep spaces at the end: "  hi  ".trim()',options:["Use .trimStart() instead","Use .trimEnd() instead","Use .length instead"],answer:0,why:"trim removes both sides. trimStart only removes leading spaces."},
+{id:"trimend",kind:"mistake",q:'You want to keep spaces at the beginning: "  hi  ".trim()',options:["Use .trimStart() instead","Use .trimEnd() instead","Use .slice() instead"],answer:1,why:"trimEnd removes trailing spaces while preserving leading spaces."},
+{id:"slice",kind:"mistake",q:'You want "ell" from "Hello": "Hello".slice(1,3)',options:["End index should be 4","Start index should be 0","Use .length"],answer:0,why:"The end index is excluded, so slice(1,4) gives ell."},
+{id:"index",kind:"mistake",q:'You want the first letter: "Rosy"[1]',options:["Use index [0]","Use index [-1]","Add () after [1]"],answer:0,why:"JavaScript string indexes start at zero."},
+{id:"const",kind:"mistake",q:'Find the mistake: const name = "Rosy"; name = "Sissy";',options:["Use let if you need reassignment","Strings must use backticks","The variable needs parentheses"],answer:0,why:"const bindings cannot be reassigned."},
+{id:"includes",kind:"mistake",q:'Find the mistake: "Hello".includes["ell"]',options:["Call includes with parentheses","Use .length instead","Remove the quotation marks"],answer:0,why:"Methods are called with parentheses: .includes('ell')."}
+].map((q,i)=>({...q,key:q.kind+"-"+q.id+"-"+i}));
+const allQuizQuestions=[...questions.map((q,i)=>({...q,kind:"output",key:"output-"+q.id+"-"+i})),...extraQuestions];
+const quizTitles={output:"Predict the Output",method:"Which Method?",mistake:"Find the Mistake",review:"Review My Mistakes"};
+function eligibleQuestions(){return allQuizQuestions.filter(q=>state.covered.includes(q.id))}
+function pool(){const available=eligibleQuestions();return quizMode==="review"?available.filter(q=>state.missed[q.key]):available.filter(q=>q.kind===quizMode)}
+function renderModeButtons(){document.querySelectorAll("[data-mode]").forEach(b=>{const on=b.dataset.mode===quizMode;b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on))});el("missedCount").textContent="("+Object.keys(state.missed).filter(key=>eligibleQuestions().some(q=>q.key===key)).length+")";el("quizTitle").textContent=quizTitles[quizMode]}
+function newQuiz(){const available=pool();currentQuiz=available.sort(()=>Math.random()-.5).slice(0,Math.min(5,available.length));quizAnswers={};renderQuiz()}
+function renderQuiz(){
+renderModeButtons();
+const available=pool();const wrap=el("quiz");wrap.replaceChildren();el("quizFinal").replaceChildren();
+if(!currentQuiz.length){
+el("quizStatus").textContent=quizMode==="review"?"Review queue": "Ready when you are";
+const empty=document.createElement("div");empty.className="empty";
+empty.textContent=quizMode==="review"?"No missed questions from covered topics yet. Great work!":eligibleQuestions().length===0?"Go to Reference and mark some entries Covered to unlock questions.":"No eligible questions for this quiz style yet. Mark more matching topics Covered in Reference.";
+wrap.append(empty);return;
+}
+const done=Object.keys(quizAnswers).length,correct=currentQuiz.filter((q,i)=>quizAnswers[i]===q.answer).length;
+el("quizStatus").textContent=done+" of "+currentQuiz.length+" answered";
+currentQuiz.forEach((q,i)=>{
+const box=document.createElement("div");box.className="question";const title=document.createElement("h3");title.textContent=(i+1)+". "+q.q;box.append(title);
+const opts=document.createElement("div");opts.className="choices";
+q.options.forEach((opt,j)=>{const b=document.createElement("button");b.type="button";b.className="choice"+(quizAnswers[i]===j?" selected":"");b.textContent=opt;b.setAttribute("aria-pressed",String(quizAnswers[i]===j));b.onclick=()=>{
+if(quizAnswers[i]!==undefined)return;
+quizAnswers[i]=j;if(j===q.answer)delete state.missed[q.key];else state.missed[q.key]=true;save();renderQuiz();
+};if(quizAnswers[i]!==undefined)b.disabled=true;opts.append(b)});
+box.append(opts);
+if(quizAnswers[i]!==undefined){const fb=document.createElement("div");fb.className="feedback"+(quizAnswers[i]===q.answer?" ok":"");fb.textContent=(quizAnswers[i]===q.answer?"✓ Correct! ":"Not quite. ")+q.why;box.append(fb)}
+wrap.append(box)});
+if(done===currentQuiz.length){const result=document.createElement("div");result.className="panel quiz-score";result.textContent="You got "+correct+" out of "+currentQuiz.length+" correct! "+(quizMode==="review"?"Correct answers are cleared from your review queue.":"Missed answers are saved for review.");el("quizFinal").append(result)}
+}
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{quizMode=b.dataset.mode;newQuiz()}));
 el("restart").onclick=newQuiz;
 const labs=[
 {id:"upper",name:".toUpperCase()",hint:"Converts all letters to uppercase.",run:s=>s.toUpperCase(),code:s=>JSON.stringify(s)+".toUpperCase()"},
