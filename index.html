@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#8b3158">
+<meta name="description" content="An interactive JavaScript reference, practice quiz, and string playground for freeCodeCamp learners.">
+<title>JavaScript Notebook · Ummiby</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#302a33;background:#fff9fb;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #ad6b89;outline-offset:2px}
+a{color:#842e55}header{background:linear-gradient(125deg,#6d2545,#9b3e6a 65%,#bc7b96);color:white;padding:26px 20px 32px}
+.shell{max-width:1050px;margin:auto}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:.7rem;font-weight:800;opacity:.87}.hero{display:flex;align-items:center;gap:15px}.logo{height:50px;width:50px;border-radius:16px;background:#ffffff23;display:grid;place-items:center;font-size:27px;border:1px solid #ffffff44}h1{font-size:clamp(1.6rem,4vw,2.4rem);margin:2px 0 3px;letter-spacing:-.05em}header p{margin:12px 0 0;line-height:1.6;color:#fff0f6}
+main{max-width:1050px;margin:-18px auto 0;padding:0 18px 55px;position:relative}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:white;border:1px solid #ecdce4;border-radius:17px;padding:7px;box-shadow:0 10px 30px #6b274313}
+nav button{background:transparent;border:0;border-radius:11px;padding:12px 6px;color:#72586a;font-weight:750}nav button[aria-selected=true]{background:#8b3158;color:white;box-shadow:0 3px 12px #8b315833}
+section[hidden]{display:none}.section-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin:27px 2px 17px}.section-header h2{margin:0 0 6px;font-size:1.45rem;letter-spacing:-.03em}.muted{color:#766977}.section-header p{margin:0;color:#766977;font-size:.94rem;line-height:1.5}
+.panel,.entry,.question,.stat{background:white;border:1px solid #eadce3;border-radius:17px;box-shadow:0 3px 15px #73324d08}
+.panel{padding:18px}.toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin-bottom:13px}.field{width:100%;border:1px solid #dfcad5;background:#fff;border-radius:11px;padding:12px 13px;color:#342635;min-width:0}.filter{min-width:145px}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:17px}.pill{background:#fff;border:1px solid #e5cfd9;border-radius:30px;padding:8px 13px;color:#74445d;font-size:.85rem}.pill.active{background:#f5e5ed;border-color:#b47693;color:#762b50;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:17px}.stat{padding:15px}.stat strong{font-size:1.45rem;display:block}.stat span{font-size:.8rem;color:#776775}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.entry{padding:18px;display:flex;flex-direction:column;gap:10px}.entry-head{display:flex;justify-content:space-between;align-items:start;gap:10px}.entry h3{margin:0;font:800 1.15rem ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.tag{font-size:.7rem;font-weight:750;background:#f5e6ed;color:#853959;padding:5px 9px;border-radius:99px;white-space:nowrap}.entry p{margin:0;color:#746675;line-height:1.5;font-size:.92rem}
+pre{margin:0;background:#302734;color:#fff3f8;border-radius:10px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;font-size:.83rem}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.result{font-size:.85rem;color:#226d55}.result code{font-weight:800}.entry-actions{margin-top:auto;display:flex;gap:7px;flex-wrap:wrap}.smallbtn{border:1px solid #dec8d3;background:#fff;color:#71324f;border-radius:9px;padding:8px 10px;font-size:.78rem;font-weight:750}.smallbtn.active{background:#f1e1e9}.primary{border:0;background:#8b3158;color:white;border-radius:11px;padding:12px 18px;font-weight:800}.primary:disabled{opacity:.45;cursor:not-allowed}.notice{border:1px solid #ebd7c0;background:#fffaf0;border-radius:12px;padding:13px 15px;color:#72583c;font-size:.88rem;line-height:1.6;margin-bottom:16px}
+.question{padding:20px;margin:15px 0}.question h3{font-size:1rem;margin:0 0 16px}.choices{display:grid;gap:9px}.choice{text-align:left;padding:12px 14px;background:#fff;border:1px solid #e7d4dd;border-radius:11px;color:#342735}.choice:hover{background:#fcf2f7}.choice.selected{background:#f9e7ef;border-color:#9b416a}.feedback{margin-top:14px;border-radius:10px;padding:11px 13px;background:#f7edf2;line-height:1.5;font-size:.9rem}.feedback.ok{background:#e7f6ee;color:#246143}.quiz-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.quiz-score{font-weight:750;color:#8b3158}
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:16px}.lab label{display:block;font-weight:750;font-size:.87rem;margin-bottom:8px}.lab textarea{height:128px;resize:vertical}.lab .panel{min-width:0}.lab-output{background:#302734;color:#fff;padding:17px;border-radius:12px;min-height:105px;white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,monospace}.hint{font-size:.82rem;color:#796876;line-height:1.5}.footer{font-size:.83rem;color:#786b78;text-align:center;padding-top:30px}.empty{padding:25px;text-align:center;color:#786b78;border:1px dashed #d9bcca;border-radius:15px}.sr-only{position:absolute;clip:rect(0,0,0,0);height:1px;width:1px;overflow:hidden}
+@media(max-width:650px){header{padding:24px 17px 31px}.cards,.lab{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr}.filter{width:100%}.stats{gap:7px}.stat{padding:12px}.stat strong{font-size:1.2rem}nav button{font-size:.85rem;padding:12px 3px}.entry{padding:16px}.section-header h2{font-size:1.3rem}}
+</style>
+</head>
+<body>
+<header><div class="shell"><div class="eyebrow">Ummiby learning studio</div><div class="hero"><div class="logo" aria-hidden="true">⌘</div><div><h1>JavaScript Notebook</h1><div>Little lessons. Big progress.</div></div></div><p>A searchable reference, bite-sized practice, and a hands-on playground as you learn with freeCodeCamp.</p></div></header>
+<main>
+<nav aria-label="Main sections" id="tabs">
+<button type="button" role="tab" aria-selected="true" data-tab="reference">⌕ &nbsp; Reference</button>
+<button type="button" role="tab" aria-selected="false" data-tab="practice">✦ &nbsp; Practice</button>
+<button type="button" role="tab" aria-selected="false" data-tab="playground">⌘ &nbsp; Playground</button>
+</nav>
+<section id="reference" role="tabpanel">
+<div class="section-header"><div><h2>Your JavaScript reference</h2><p>Search by method name or by what you want to do.</p></div></div>
+<div class="notice">🌱 Your notebook starts with beginner variables and strings. Mark individual entries “Covered” as you reach them in the course. Only covered entries appear in practice. No .padStart() quizzes!</div>
+<div class="stats"><div class="stat"><strong id="totalCount">0</strong><span>Reference entries</span></div><div class="stat"><strong id="coveredCount">0</strong><span>Marked covered</span></div><div class="stat"><strong id="savedCount">0</strong><span>Favorites</span></div></div>
+<div class="toolbar"><label class="sr-only" for="search">Search reference</label><input class="field" id="search" type="search" placeholder="Try ‘uppercase’, ‘remove spaces’, ‘slice’..."><label class="sr-only" for="category">Category</label><select class="field filter" id="category"><option value="All">All categories</option><option value="Basics">Basics</option><option value="Variables">Variables</option><option value="Strings">Strings</option><option value="Methods">Methods</option></select></div>
+<div class="pills" id="filters" aria-label="Filter reference"><button class="pill active" data-filter="all">All entries</button><button class="pill" data-filter="covered">Covered</button><button class="pill" data-filter="favorites">Favorites</button><button class="pill" data-filter="new">Not yet covered</button></div>
+<div class="cards" id="cards"></div>
+</section>
+<section id="practice" role="tabpanel" hidden>
+<div class="section-header"><div><h2>Practice what you know</h2><p>Quick multiple-choice questions with instant explanations.</p></div></div>
+<div class="notice">Questions only use entries marked “Covered” in Reference. You can change your selections anytime.</div>
+<div class="panel"><div class="quiz-top"><div><strong>Mini quiz</strong><div class="hint" id="quizStatus">Ready when you are.</div></div><button class="smallbtn" id="restart">New questions ↻</button></div><div id="quiz"></div><div id="quizFinal" aria-live="polite"></div></div>
+</section>
+<section id="playground" role="tabpanel" hidden>
+<div class="section-header"><div><h2>String playground</h2><p>Type your own text, choose a method, and see the result instantly.</p></div></div>
+<div class="notice">This first playground uses safe, guided string operations (rather than executing arbitrary code). As you learn more JavaScript, we can expand it.</div>
+<div class="lab"><div class="panel"><label for="labText">Your text</label><textarea id="labText" class="field">Hello Rosy</textarea><label for="labMethod" style="margin-top:17px">Try a method</label><select class="field" id="labMethod"></select><div id="labArgs" style="margin-top:14px"></div></div><div class="panel"><label>JavaScript example</label><pre id="labCode"></pre><label style="margin-top:19px">Result</label><div class="lab-output" id="labOutput" aria-live="polite"></div><p class="hint" id="labHint"></p></div></div>
+</section>
+<div class="footer">Made for learning · Progress and favorites stay in this browser (localStorage) · <a href="https://www.freecodecamp.org/learn/javascript-v9" target="_blank" rel="noopener noreferrer">freeCodeCamp JavaScript V9 ↗</a></div>
+</main>
+<script>
+"use strict";
+const entries=[
+{id:"let",title:"let",category:"Variables",description:"Create a variable whose value you can reassign.",code:'let color = "pink";\ncolor = "raspberry";',result:'color → "raspberry"',keywords:"variable change declare"},
+{id:"const",title:"const",category:"Variables",description:"Create a variable that cannot be reassigned.",code:'const name = "Rosy";',result:'name → "Rosy"',keywords:"variable constant declare"},
+{id:"assign",title:"=",category:"Basics",description:"Assign a value to a variable.",code:'let name = "Rosy";',result:'name → "Rosy"',keywords:"assignment equals"},
+{id:"log",title:"console.log()",category:"Basics",description:"Print a value to the developer console.",code:'console.log("Hello!");',result:'Hello!',keywords:"print output console display"},
+{id:"typeof",title:"typeof",category:"Basics",description:"Find the type of a value.",code:'typeof "hello";',result:'"string"',keywords:"type data"},
+{id:"comments",title:"// and /* */",category:"Basics",description:"Add notes the JavaScript engine ignores.",code:'// One line\n/* Multiple\n lines */',result:"Comments don't run.",keywords:"comments documentation notes"},
+{id:"quotes",title:"Quotes",category:"Strings",description:"Create string values using single or double quotes.",code:'const a = "Hi";\nconst b = \'Rosy\';',result:'Both are strings.',keywords:"single double quotation string"},
+{id:"template",title:"Template literals",category:"Strings",description:"Insert values inside backtick strings using ${}.",code:'const name = "Rosy";\n`Hello, ${name}!`;',result:'"Hello, Rosy!"',keywords:"interpolation backticks dollar braces"},
+{id:"join",title:"+ (concatenation)",category:"Strings",description:"Combine strings into one longer string.",code:'"Hello " + "Rosy";',result:'"Hello Rosy"',keywords:"join connect combine"},
+{id:"append",title:"+=",category:"Strings",description:"Add more text to an existing string variable.",code:'let text = "Hi";\ntext += "!";',result:'"Hi!"',keywords:"append concatenate"},
+{id:"escape",title:"Escape characters",category:"Strings",description:"Use backslash sequences such as \\n and \\t inside strings.",code:'"Hello\\nRosy";',result:"Hello [new line] Rosy",keywords:"newline tab quote slash"},
+{id:"length",title:".length",category:"Strings",description:"Count the UTF-16 code units in a string.",code:'"Rosy".length;',result:"4",keywords:"count size number characters"},
+{id:"index",title:"[index]",category:"Strings",description:"Read a character at a zero-based position.",code:'"Rosy"[0];',result:'"R"',keywords:"character first position square brackets"},
+{id:"charat",title:".charAt()",category:"Methods",description:"Get the character at a specified position.",code:'"Rosy".charAt(1);',result:'"o"',keywords:"character position"},
+{id:"indexof",title:".indexOf()",category:"Methods",description:"Find the first index of matching text, or -1 if absent.",code:'"banana".indexOf("na");',result:"2",keywords:"search find position first"},
+{id:"includes",title:".includes()",category:"Methods",description:"Check whether a string contains a piece of text.",code:'"Hello".includes("ell");',result:"true",keywords:"find search contains"},
+{id:"slice",title:".slice()",category:"Methods",description:"Extract part of a string; the end index is excluded.",code:'"Hello".slice(1, 4);',result:'"ell"',keywords:"extract substring cut portion"},
+{id:"upper",title:".toUpperCase()",category:"Methods",description:"Make letters uppercase.",code:'"rosy".toUpperCase();',result:'"ROSY"',keywords:"capitalize uppercase capital letters"},
+{id:"lower",title:".toLowerCase()",category:"Methods",description:"Make letters lowercase.",code:'"ROSY".toLowerCase();',result:'"rosy"',keywords:"lower lowercase letters"},
+{id:"trim",title:".trim()",category:"Methods",description:"Remove whitespace at the beginning and end.",code:'"  hello  ".trim();',result:'"hello"',keywords:"remove spaces whitespace clean"},
+{id:"replace",title:".replace()",category:"Methods",description:"Replace the first matching text with something else.",code:'"cat cat".replace("cat","dog");',result:'"dog cat"',keywords:"substitute change text"},
+{id:"repeat",title:".repeat()",category:"Methods",description:"Repeat a string a given number of times.",code:'"Hi".repeat(3);',result:'"HiHiHi"',keywords:"multiply repeat"}
+];
+const questions=[
+{id:"let",q:"Which keyword lets you reassign a variable later?",options:["const","let","typeof"],answer:1,why:"let declares a variable whose value can change."},
+{id:"const",q:'What happens if you reassign a const variable?',options:["The reassignment succeeds","JavaScript throws an error","It automatically becomes let"],answer:1,why:"A const binding cannot be reassigned."},
+{id:"log",q:'Which command prints a message to the console?',options:['print("Hi")','console.log("Hi")','show("Hi")'],answer:1,why:"console.log() writes to the developer console."},
+{id:"typeof",q:'What is typeof "hello"?',options:['"text"','"string"','"word"'],answer:1,why:"A quoted text value has the JavaScript type string."},
+{id:"template",q:'Which expression inserts a variable in a template literal?',options:['{name}','${name}','(name)'],answer:1,why:"Template literals use backticks and ${expression}."},
+{id:"join",q:'What is "Hi " + "Rosy"?',options:['"Hi Rosy"','"Hi + Rosy"','"HiRosy"'],answer:0,why:"The + operator joins the strings, preserving the space."},
+{id:"length",q:'What is "Rosy".length?',options:["3","4","5"],answer:1,why:"The four letters are R, o, s, y."},
+{id:"index",q:'What is "Rosy"[0]?',options:['"R"','"o"','"y"'],answer:0,why:"The first character has index 0."},
+{id:"charat",q:'What is "Rosy".charAt(1)?',options:['"R"','"o"','"s"'],answer:1,why:"Index 1 refers to the second character."},
+{id:"indexof",q:'What is "banana".indexOf("na")?',options:["1","2","4"],answer:1,why:"The first 'na' starts at index 2."},
+{id:"includes",q:'What is "Hello".includes("ell")?',options:["true","false","2"],answer:0,why:"The characters ell appear in Hello."},
+{id:"slice",q:'What is "Hello".slice(1,4)?',options:['"Hell"','"ell"','"ello"'],answer:1,why:"slice starts at 1 and stops before index 4."},
+{id:"upper",q:'What is "Rosy".toUpperCase()?',options:['"rosy"','"ROSY"','"Rosy"'],answer:1,why:"All letters become uppercase."},
+{id:"lower",q:'What is "ROSY".toLowerCase()?',options:['"rosy"','"ROSY"','"Rosy"'],answer:0,why:"All letters become lowercase."},
+{id:"trim",q:'What is "  Hi  ".trim()?',options:['"  Hi"','"Hi"','"Hi  "'],answer:1,why:"trim removes spaces at both ends."},
+{id:"replace",q:'What is "cat cat".replace("cat","dog")?',options:['"dog dog"','"cat dog"','"dog cat"'],answer:2,why:"replace changes only the first match."},
+{id:"repeat",q:'What is "Hi".repeat(3)?',options:['"HiHiHi"','"Hi Hi Hi"','"Hi3"'],answer:0,why:"repeat does not add spaces."}
+];
+const STORE="ummiby-js-notebook-v1";
+let state;try{state=JSON.parse(localStorage.getItem(STORE))||{}}catch{state={}};state.covered=state.covered||[];state.favorites=state.favorites||[];
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch{}}
+const el=id=>document.getElementById(id);
+let activeFilter="all",currentQuiz=[],quizAnswers={};
+document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b===button)));document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==tab);if(tab==="practice")renderQuiz();}));
+function renderCards(){const text=el("search").value.trim().toLowerCase(),category=el("category").value;const matches=entries.filter(e=>(category==="All"||e.category===category)&&(activeFilter==="all"||activeFilter==="covered"&&state.covered.includes(e.id)||activeFilter==="favorites"&&state.favorites.includes(e.id)||activeFilter==="new"&&!state.covered.includes(e.id))&&[e.title,e.description,e.keywords,e.code].join(" ").toLowerCase().includes(text));
+el("totalCount").textContent=entries.length;el("coveredCount").textContent=state.covered.length;el("savedCount").textContent=state.favorites.length;
+const cards=el("cards");cards.replaceChildren();if(!matches.length){cards.innerHTML='<div class="empty">No matching entries. Try another keyword or filter.</div>';return}
+for(const e of matches){const card=document.createElement("article");card.className="entry";const isCovered=state.covered.includes(e.id),isFav=state.favorites.includes(e.id);card.innerHTML='<div class="entry-head"><h3></h3><span class="tag"></span></div><p></p><pre></pre><div class="result">Result: <code></code></div><div class="entry-actions"><button class="smallbtn cover" aria-pressed="'+isCovered+'"></button><button class="smallbtn favorite" aria-pressed="'+isFav+'"></button><button class="smallbtn copy">Copy code</button></div>';card.querySelector("h3").textContent=e.title;card.querySelector(".tag").textContent=e.category;card.querySelector("p").textContent=e.description;card.querySelector("pre").textContent=e.code;card.querySelector(".result code").textContent=e.result;card.querySelector(".cover").textContent=isCovered?"✓ Covered":"+ Mark covered";card.querySelector(".favorite").textContent=isFav?"★ Saved":"☆ Save";card.querySelector(".cover").onclick=()=>toggle("covered",e.id);card.querySelector(".favorite").onclick=()=>toggle("favorites",e.id);card.querySelector(".copy").onclick=async ev=>{try{await navigator.clipboard.writeText(e.code);ev.currentTarget.textContent="Copied!"}catch{ev.currentTarget.textContent="Select code to copy"}};cards.append(card)}
+}
+function toggle(key,id){const array=state[key];state[key]=array.includes(id)?array.filter(x=>x!==id):[...array,id];save();renderCards()}
+el("search").addEventListener("input",renderCards);el("category").addEventListener("change",renderCards);document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));renderCards()});
+function newQuiz(){const available=questions.filter(q=>state.covered.includes(q.id));currentQuiz=available.sort(()=>Math.random()-.5).slice(0,Math.min(5,available.length));quizAnswers={};renderQuiz()}
+function renderQuiz(){const available=questions.filter(q=>state.covered.includes(q.id));if(!currentQuiz.length&&available.length)newQuiz();const wrap=el("quiz");wrap.replaceChildren();el("quizFinal").replaceChildren();if(!available.length){el("quizStatus").textContent="No topics selected yet";wrap.innerHTML='<div class="empty">Go to Reference and mark a few entries “Covered” to unlock practice questions.</div>';return}
+if(!currentQuiz.length){el("quizStatus").textContent="No questions available";return}
+const done=Object.keys(quizAnswers).length,correct=currentQuiz.filter((q,i)=>quizAnswers[i]===q.answer).length;el("quizStatus").textContent=done+" of "+currentQuiz.length+" answered";
+currentQuiz.forEach((q,i)=>{const box=document.createElement("div");box.className="question";const title=document.createElement("h3");title.textContent=(i+1)+". "+q.q;box.append(title);const opts=document.createElement("div");opts.className="choices";q.options.forEach((opt,j)=>{const b=document.createElement("button");b.type="button";b.className="choice"+(quizAnswers[i]===j?" selected":"");b.textContent=opt;b.setAttribute("aria-pressed",String(quizAnswers[i]===j));b.onclick=()=>{quizAnswers[i]=j;renderQuiz()};opts.append(b)});box.append(opts);if(quizAnswers[i]!==undefined){const fb=document.createElement("div");fb.className="feedback"+(quizAnswers[i]===q.answer?" ok":"");fb.textContent=(quizAnswers[i]===q.answer?"✓ Correct! ":"Not quite. ")+q.why;box.append(fb)}wrap.append(box)});
+if(done===currentQuiz.length){const result=document.createElement("div");result.className="panel quiz-score";result.textContent="You got "+correct+" out of "+currentQuiz.length+" correct!";el("quizFinal").append(result)}}
+el("restart").onclick=newQuiz;
+const labs=[
+{id:"upper",name:".toUpperCase()",hint:"Converts all letters to uppercase.",run:s=>s.toUpperCase(),code:s=>JSON.stringify(s)+".toUpperCase()"},
+{id:"lower",name:".toLowerCase()",hint:"Converts all letters to lowercase.",run:s=>s.toLowerCase(),code:s=>JSON.stringify(s)+".toLowerCase()"},
+{id:"length",name:".length",hint:"Counts UTF-16 code units (often the number of characters).",run:s=>s.length,code:s=>JSON.stringify(s)+".length"},
+{id:"trim",name:".trim()",hint:"Removes whitespace from both ends.",run:s=>s.trim(),code:s=>JSON.stringify(s)+".trim()"},
+{id:"slice",name:".slice(start, end)",hint:"Extracts from start to just before end.",args:["Start index","End index"],run:(s,a)=>s.slice(Number(a[0]),Number(a[1])),code:(s,a)=>JSON.stringify(s)+".slice("+Number(a[0])+", "+Number(a[1])+")"},
+{id:"includes",name:".includes(text)",hint:"Checks whether the text appears inside the string.",args:["Search for"],run:(s,a)=>s.includes(a[0]),code:(s,a)=>JSON.stringify(s)+".includes("+JSON.stringify(a[0])+")"},
+{id:"indexof",name:".indexOf(text)",hint:"Returns the first match's position or -1 if absent.",args:["Search for"],run:(s,a)=>s.indexOf(a[0]),code:(s,a)=>JSON.stringify(s)+".indexOf("+JSON.stringify(a[0])+")"},
+{id:"replace",name:".replace(find, replacement)",hint:"Replaces only the first matching piece of text.",args:["Find","Replace with"],run:(s,a)=>s.replace(a[0],a[1]),code:(s,a)=>JSON.stringify(s)+".replace("+JSON.stringify(a[0])+", "+JSON.stringify(a[1])+")"},
+{id:"charat",name:".charAt(index)",hint:"Gets the character at the given position.",args:["Index"],run:(s,a)=>s.charAt(Number(a[0])),code:(s,a)=>JSON.stringify(s)+".charAt("+Number(a[0])+")"}
+];
+const method=el("labMethod");labs.forEach(l=>{const option=document.createElement("option");option.value=l.id;option.textContent=l.name;method.append(option)});
+function buildArgs(){const lab=labs.find(x=>x.id===method.value);el("labArgs").replaceChildren();(lab.args||[]).forEach((label,i)=>{const labelNode=document.createElement("label");labelNode.textContent=label;const inp=document.createElement("input");inp.className="field lab-arg";inp.value=lab.id==="slice"?(i===0?"1":"4"):lab.id==="charat"?"0":lab.id==="replace"?(i===0?"Hello":"Hi"):"o";inp.setAttribute("aria-label",label);inp.addEventListener("input",runLab);el("labArgs").append(labelNode,inp)});runLab()}
+function runLab(){const lab=labs.find(x=>x.id===method.value);const s=el("labText").value;const a=Array.from(document.querySelectorAll(".lab-arg")).map(x=>x.value);try{el("labCode").textContent=lab.code(s,a);const out=lab.run(s,a);el("labOutput").textContent=JSON.stringify(out);el("labHint").textContent=lab.hint}catch(e){el("labOutput").textContent=e.message}}
+method.addEventListener("change",buildArgs);el("labText").addEventListener("input",runLab);
+renderCards();buildArgs();
+</script>
+</body>
+</html>
